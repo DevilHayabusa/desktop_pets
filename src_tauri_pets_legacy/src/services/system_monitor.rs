@@ -1,32 +1,31 @@
-use sysinfo::{CpuExt, System, SystemExt};
+use sysinfo::{System, Cpu};
 use serde::Serialize;
 
-// Represents the current state of hardware resources to be sent to the frontend
+// Data structure to be sent to the React frontend
 #[derive(Debug, Serialize)]
 pub struct SystemResources {
     pub cpu_usage_percentage: f32,
-    pub available_memory_mb: u64,
+    pub used_memory_mb: u64,      // Changed from available to used
     pub total_memory_mb: u64,
 }
 
-// Encapsulates the system monitor to prevent memory leaks and redundant instantiations
 pub struct HardwareMonitor {
     sys: System,
 }
 
 impl HardwareMonitor {
-    // Initializes the monitor with existing system metrics
     pub fn new() -> Self {
         HardwareMonitor {
             sys: System::new_all(),
         }
     }
 
-    // Refreshes hardware data and calculates current averages
     pub fn get_current_resources(&mut self) -> SystemResources {
-        self.sys.refresh_cpu();
+        // Refresh system metrics
+        self.sys.refresh_cpu_usage();
         self.sys.refresh_memory();
 
+        // Calculate average CPU usage across all cores
         let cpus = self.sys.cpus();
         let mut total_cpu_usage = 0.0;
         
@@ -40,14 +39,20 @@ impl HardwareMonitor {
             total_cpu_usage / cpus.len() as f32
         };
 
-        // Convert bytes to Megabytes for easier frontend consumption
-        let available_mem = self.sys.available_memory() / 1024 / 1024;
-        let total_mem = self.sys.total_memory() / 1024 / 1024;
+        // Memory calculations: Windows reports 'available', but users prefer 'used'
+        let total_bytes = self.sys.total_memory();
+        let available_bytes = self.sys.available_memory();
+        
+        // Logical Used Memory = Total - Available
+        let used_bytes = total_bytes - available_bytes;
+
+        let used_mb = used_bytes / 1024 / 1024;
+        let total_mb = total_bytes / 1024 / 1024;
 
         SystemResources {
             cpu_usage_percentage: average_cpu_usage,
-            available_memory_mb: available_mem,
-            total_memory_mb: total_mem,
+            used_memory_mb: used_mb,
+            total_memory_mb: total_mb,
         }
     }
 }
