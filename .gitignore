@@ -1,0 +1,13 @@
+# Rust
+/src_tauri/target/
+**/*.rs.bk
+
+# Node/Frontend
+node_modules/
+dist/
+build/
+.env
+
+# OS generated files
+.DS_Store
+Thumbs.db
