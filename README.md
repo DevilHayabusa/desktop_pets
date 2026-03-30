@@ -1,48 +1,30 @@
-# Desktop Pets Engine
+# Desktop Pet Engine
 
-A cross-platform, highly optimized desktop pet application that lives on your screen. Built with a focus on low resource consumption, system awareness, and engaging interactive mechanics.
+A lightweight, native desktop pet application built purely in Rust. 
 
-## 🏗️ Architecture and Tech Stack
+This project implements a borderless, transparent window that lives on your desktop. By utilizing a native graphics engine instead of a Webview, it guarantees extreme hardware efficiency, incredibly low RAM consumption, and flawless click-through behavior on the operating system level.
 
-This project is divided into a robust, high-performance core and a lightweight frontend:
+## Architecture
 
-- **Core Engine (Backend):** Rust + Tauri
-  - Handles system telemetry (CPU/RAM monitoring).
-  - Manages circadian rhythms based on local OS time.
-  - Safely reads/writes persistent states using local JSON storage.
-  - Native window manipulation (transparent, always-on-top, click-through).
-- **Interface (Frontend):** React (TypeScript) + Vite *(Pending Initialization)*
-  - Renders pet sprites and animations.
-  - Handles user interactions (drag & drop, petting).
+The engine is built on top of [Bevy ECS](https://bevyengine.org/), providing a robust Entity-Component-System architecture. This allows for modular expansion of the pet's logic, states, and physics without performance bottlenecks.
 
-## ✨ Key Features
+### Core Features
 
-- **System Awareness:** Pets react to your computer's resource usage. High CPU loads might make them tired or anxious.
-- **Dynamic Circadian Rhythms:** Behavior changes based on the real-world time and the pet's specific species (e.g., nocturnal cats vs. diurnal dogs).
-- **Persistent State:** Pet growth, energy levels, and rarities are safely stored in local JSON files.
-- **Unobtrusive Execution:** Runs silently on startup (auto-start) with borderless, transparent windows.
+- Native OS transparent windows using `winit`.
+- Zero-overhead click-through (interactions bypass the transparent areas completely).
+- Asynchronous asset loading and dynamic sprite scaling.
+- Native window dragging mechanics.
 
-## 🗂️ Project Structure
+## Prerequisites
 
-/src_tauri
-  /src
-    /models       # Data structures (Pet, Species, Rarity)
-    /services     # Core logic (SystemMonitor, Behavior)
-    /utils        # File management and OS utilities
-/frontend         # React UI components and assets
-/local_storage    # Encrypted/Hashed JSON save files
-/docs             # Extended architectural documentation
-/tests            # Integration and unit tests
+- [Rust Toolchain](https://rustup.rs/) (Cargo, rustc)
+- A compatible GPU (Vulkan/DirectX/Metal)
 
-## 🚀 Roadmap
+## Getting Started
 
-- [x] Initialize project structure and Git repository.
-- [x] Define core Rust data models.
-- [x] Implement hardware monitoring service.
-- [x] Create JSON file manager for persistent state.
-- [ ] Connect Rust core to Tauri commands (`main.rs`).
-- [ ] Initialize React frontend and establish IPC communication.
-- [ ] Implement network trading system via WebSockets.
+1. Clone the repository.
+2. Ensure you have your initial sprite named `hero.png` inside the `/assets` directory at the root of the project.
+3. Run the engine via Cargo:
 
-## 🛡️ License and Security
-This project implements data hashing to prevent unauthorized manipulation of local save files (e.g., cheating pet rarity levels).
+```bash
+cargo run
